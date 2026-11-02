@@ -37,6 +37,8 @@ def did_per_group(X, cell_of_row, groups, cells):
     a lie not explained by adding the instruction effect and the falsehood
     effect. Returns (group_ids, deltas[n_groups, d]).
     """
+    if not len(X) == len(groups) == len(cell_of_row):
+        raise ValueError("X, groups and cell_of_row must have the same length")
     weights = dict(zip(cells, (1.0, -1.0, -1.0, 1.0)))
     uniq = np.unique(groups)
     index = {g: i for i, g in enumerate(uniq)}
@@ -46,5 +48,7 @@ def did_per_group(X, cell_of_row, groups, cells):
         if c in weights:
             delta[index[g]] += weights[c] * X[r]
             count[index[g], cells.index(c)] += 1
+    if (count > 1).any():
+        raise ValueError("a group has more than one row in a cell")
     full = (count == 1).all(1)
     return uniq[full], delta[full]

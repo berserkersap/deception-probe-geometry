@@ -122,6 +122,9 @@ def test_did_cancels_additive_effects(rng):
     assert len(ids) == 200
     # Main effects have norm 3; what is left is sampling noise (~0.3 here).
     assert np.linalg.norm(delta.mean(0)) < 0.15 * 3
+    # Each city's own base must cancel: cross-city pairing would leave the
+    # per-city base vectors (norm ~22) in every delta.
+    assert np.linalg.norm(delta, axis=1).max() < 10
     # Now add a lie-only component and check it is recovered.
     X2 = X + np.array([3 * extra if c == "LF" else 0 * extra for c in cells])
     _, delta2 = did_per_group(X2, cells, np.array(groups), ("LF", "LT", "HF", "HT"))
