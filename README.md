@@ -1,58 +1,302 @@
 # Latent Geometry and Out-of-Distribution Transfer in LLM Deception Probes
 
-## Key Takeaway
-[Draft finding: Linear probes trained on factual falsehood generalized poorly to instructed lies (dropping from XX% to YY%), driven primarily by directional rotation rather than an activation offset shift; retraining after projecting out the falsehood direction confirmed that deceptive intent retains an independent, decodable signal.]
+## Key takeaway
 
-## Summary of Results
-* **Directional Rotation vs. Threshold Offset:**
-  * The cosine similarity between factual falsehood ($\vec{w}_{\text{falsehood}}$) and instructed deception ($\vec{w}_{\text{deception}}$) peaked at only [0.AA] at layer [L], well below the within-distribution split-half reliability ceiling of [0.BB].
-  * Freezing the probe direction and refitting *only* the scalar threshold $b$ on the target distribution [did / did not] recover accuracy (shifting from [YY]% to [ZZ]%), indicating that generalization failure is driven by [directional rotation / an activation offset shift].
-* **Decoupling Falsehood from Deception:**
-  * Symmetrically prompting both classes in Distribution B (instructed truth vs. instructed lie) controlled for instruction tokens.
-  * Projecting out the factual falsehood vector $\vec{v}_{\text{falsehood}}$ and retraining on the residual subspace yielded [WW]% accuracy, showing that the model's representation of lying [is / is not] merely an artifact of evaluating a false claim.
-* **Instruction Confound Check:** Testing the deception probe on benign prompts containing conversational formatting confirmed it does not fire purely on instruction presence.
+On `gemma-2-2b-it`, a linear probe trained on plain true/false statements
+"detects" instructed lies almost perfectly (AUROC 1.00 from layer 11 on). It
+does so only because the lies are false: it fires about 2.5× more strongly on
+honest false answers than on actual lies. The probe's real out-of-distribution
+failure happens inside the lie-instructed context. From about layer 17–18 on, the
+direction that separates true from false answers in honest contexts **inverts**
+there. A probe trained on honest-context transcripts scores AUROC
+**0.04** on lie-context answers at layer 24. Refitting the threshold
+cannot repair this, so it is a change of direction, not an offset. The
+information is not lost: a direction built from both instruction contexts
+reads truth in every context, including one it never saw (AUROC ≥ 0.99).
 
-## Research Motivation
-Anthropic's "Fine-Tuned Lie Detectors Failed to Generalize" found that deception detectors often fail to transfer across distributions. This project investigates the underlying latent geometry: when a probe fails to transfer, is it due to directional rotation, threshold shifts, or confounding between dishonesty and factual falsehood?
+## Summary of results
 
-## Experimental Setup
-* **Model:** `google/gemma-2-2b-it`
-* **Data Splits:**
-  * *Distribution A (Factual Veracity):* True vs. false statements from Marks & Tegmark's *Geometry of Truth*.
-  * *Distribution B (Instructed Intent):* Symmetrically instructed pairs across identical facts:
-    * Label 0: Prompted with *"Answer truthfully"* $\rightarrow$ True response.
-    * Label 1: Prompted with *"Answer falsely"* $\rightarrow$ False response.
-* **Probing Methods:** Difference-of-means vectors and $L_2$-regularized Logistic Regression across residual stream layers (layers 10 to 22).
+* **Transfer to lies works, but only through falsehood.** The falsehood probe
+  separates *truthful instruction + true answer* from *lie instruction + false
+  answer* with AUROC ≥ 0.996 from layer 8 on. At layer 18 its score on honest
+  false answers is 2.44–2.50 on a scale where a real lie is 1.0. It is a
+  falsehood detector.
+* **Main-task failures are offsets.** Within layers 8–25, zero-shot accuracy
+  falls to chance at layers 13 and 19 (and to 0.66–0.67 at 20–21), but
+  refitting only the threshold on held-out cities restores ≥ 0.998. The direction is fine; the
+  raw-text-to-chat format shift moves the activations.
+* **Inside the lie context the truth direction changes.** In the
+  no-instruction and truthful contexts the true-vs-false directions agree
+  (cosine 0.88–0.97 from layer 8), and the falsehood probe reads them (AUROC
+  ≥ 0.99). In the lie context, from layer 17 on, the lie-context direction is
+  nearly orthogonal to both: cosine with the falsehood direction is
+  0.03–0.07, and cosine with the truthful-context direction is +0.01 to −0.33.
+  The split-half noise ceilings are ≥ 0.99.
+* **The honest-context truth direction inverts under the lie instruction.**
+  A probe trained on true-vs-false in the no-instruction and truthful
+  contexts ranks lie-context answers *backwards* in late layers (AUROC 0.13
+  at layer 20, 0.04 at layer 24, diff-of-means; logistic regression is
+  similar). The falsehood probe from plain statements mostly degrades rather
+  than inverting. In layers 18–24, logistic regression falls to 0.51–0.76
+  (and inverts to 0.17 at layer 25), and diff-of-means falls to 0.75–0.95,
+  with a true/false gap 13–33× smaller than under the truthful instruction.
+  A threshold refit does not repair it (0.49–0.71 for logistic regression).
+* **A context-invariant truth direction exists.** The sum of the
+  truthful-context and lie-context true-vs-false directions separates true
+  from false answers in all three contexts (AUROC ≥ 0.994 from layer 8).
+  That includes the
+  no-instruction context, which was never used to build it and contains no
+  lies, so it cannot be reading lie-ness.
+* **The lie probe is half falsehood, half instruction.** A probe trained on
+  lies vs. honest truths scores 0.63 on honest false answers and 0.89 on
+  lie-instructed *true* answers (layer 18). A lie is not additive in
+  instruction and falsehood: the difference-in-differences is large (d_z
+  5.7–7.1 from layer 12, sign-flip p ≤ 10⁻⁴). But it is anti-aligned with
+  veracity (cosine −0.73 to −0.85 from layer 17), meaning the lie instruction *suppresses* the falsehood signal, the
+  same phenomenon as above. There is no evidence of a separate lie feature.
+* **Controls.**
+  * Knowledge filter: the model knows 744/748 cities.
+  * Instruction length: the truthful and lie instructions are word-for-word
+    parallel and equal in Gemma tokens.
+  * Country identity: predicting labels from the named country alone is at
+    chance (48% and 52%).
+  * Massive-activation dimensions: cosines after per-dimension
+    standardisation tell the same story.
 
-## Results & Analysis
+## Research motivation
 
-### 1. Cross-Distribution Transfer and Threshold Refit
-| Layer | In-Dist A (Falsehood) | Zero-Shot Transfer to B | Threshold Refit on B | Split-Half Ceiling (B) |
-| :--- | :--- | :--- | :--- | :--- |
-| Layer 10 | [XX.X]% | [YY.Y]% | [ZZ.Z]% | [0.BB] |
-| Layer 14 | [XX.X]% | [YY.Y]% | [ZZ.Z]% | [0.BB] |
-| Layer 18 | [XX.X]% | [YY.Y]% | [ZZ.Z]% | [0.BB] |
-| Layer 22 | [XX.X]% | [YY.Y]% | [ZZ.Z]% | [0.BB] |
+Anthropic's [*Fine-Tuned Lie Detectors Failed to Generalize*](https://alignment.anthropic.com/2026/lie-detectors/)
+found that LoRA-fine-tuned lie detectors reach about 0.95 AUROC in
+distribution, but only about 0.70–0.75 on unseen lie categories. It concludes
+that they "learn narrow, task-specific features rather than general deception
+signatures". It lists representation-level approaches as future work.
 
-*(Insert: `results/plots/transfer_and_recovery.png`)*
+This project asks the analogous question for linear probes on the residual
+stream, where the geometry can be inspected directly. When a probe fails to
+transfer, does its direction rotate, does an offset move the activations
+(fixable by re-thresholding), or does the probe track a confound such as
+statement falsehood or the lie instruction itself?
 
-### 2. Layer-wise Directional Alignment
-*(Insert plot showing layer-wise cosine similarity between probe directions compared to the split-half upper bound: `results/plots/cosine_vs_ceiling.png`)*
+## Experimental setup
 
-### 3. Orthogonalization Check
-*(Insert table/plot showing probe performance on instructed lies after projecting out $\vec{v}_{\text{falsehood}}$ and retraining on the residual activation subspace)*
+* **Model:** `gemma-2-2b-it` in bf16. It is loaded from the ungated
+  `unsloth/gemma-2-2b-it` mirror, pinned to a revision; pass
+  `--model google/gemma-2-2b-it` if you have access.
+* **Facts:** the Geometry of Truth `cities` dataset (Marks & Tegmark),
+  pinned and hash-checked. The dataset has 748 cities, each with one true and
+  one false statement. Cities the model does not place correctly when asked
+  neutrally are dropped, leaving 744. They are split into two **disjoint**
+  pools.
+* **Distribution A (298 cities, 596 rows):** the raw statement, e.g.
+  `The city of Lodz is in Poland.` → falsehood probe.
+* **Distribution B (446 cities, 2,676 rows):** a 3×2 grid of chat transcripts
+  per city. The answer is **teacher-forced**, and it is the Geometry of Truth
+  statement verbatim, so A and B end in identical tokens.
 
-## Methodological Context
-This geometric framework adapts empirical analysis methods from my Master's thesis, where representations achieved 88% linear SVM separability despite a negative silhouette score (-0.028) across DBSCAN clusters—demonstrating that target properties can align cleanly along linear directions even without forming isolated spatial clusters.
+  | instruction (in the user turn) | true answer | false answer |
+  |---|---|---|
+  | none: `Which country is the city of X in?` | NT | NF |
+  | `Answer the following question with the truth. Give a true answer.` | HT | HF |
+  | `Answer the following question with a lie. Give a false answer.` | LT | **LF = lie** |
+
+* **Read position:** the residual stream at the final token (the closing
+  `.`), for every layer. Layer *i* = output of decoder block *i−1*.
+* **Probes:** difference-of-means (unit direction, midpoint threshold) and
+  L2 logistic regression (C = 0.01, centred and scaled by one global scalar
+  so geometry is preserved). Both are expressed as a unit direction plus a
+  threshold in raw activation space.
+* **Evaluation:** 5-fold cross-validation grouped by city everywhere. Any
+  direction used for erasure or comparison is estimated on training cities
+  only. The detailed layer (18) was chosen on Distribution A alone, as the
+  best A→A accuracy.
+* **Noise ceilings:** cosines are computed between directions estimated on
+  disjoint city halves, and compared with each direction's own split-half
+  cosine at matched sample size.
+
+## Results and analysis
+
+### 1. Transfer, and offset vs. rotation on the main task
+
+![transfer](results/plots/transfer_and_recovery.png)
+
+| layer | A→A acc | A→B AUROC | A→B zero-shot acc | A→B threshold-refit acc | B→B acc |
+|---|---|---|---|---|---|
+| 6 | 0.846 | 0.934 | 0.841 | 0.863 | 0.963 |
+| 10 | 0.933 | 0.999 | 0.896 | 0.994 | 1.000 |
+| 13 | 0.983 | 1.000 | 0.500 | 0.998 | 1.000 |
+| 18 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 |
+| 19 | 1.000 | 1.000 | 0.500 | 1.000 | 1.000 |
+| 21 | 1.000 | 1.000 | 0.670 | 1.000 | 1.000 |
+
+*(Diff-of-means. A→B is truthful+true vs lie+false.)*
+
+Wherever zero-shot accuracy collapses, AUROC stays at 1.0 and a threshold
+refit on held-out cities recovers it. These failures are offsets, not
+rotations.
+
+### 2. What the probes actually read: the six-cell grid
+
+![grid](results/plots/grid_scores.png)
+
+Scores are normalised so that truthful+true = 0 and lie+false = 1.
+
+* The **falsehood probe** puts every false answer far above the lie
+  (NF 2.50, HF 2.44). Lie-instructed true answers move most of the way
+  towards "false" (LT 0.86).
+* The **lie probe** sits roughly halfway on both confound cells (HF 0.63,
+  LT 0.89).
+* The "additivity residual" is LF − LT − HF + HT. It is strongly negative for
+  the falsehood probe (−2.30), because the lie instruction compresses its
+  true/false gap.
+
+![grid by layer](results/plots/grid_by_layer.png)
+
+### 3. Inside the lie context: offset or direction change?
+
+![context](results/plots/context_veracity.png)
+
+| layer | falsehood probe AUROC in L (LR / DoM) | threshold refit in L (LR) | honest-context probe AUROC in L | both-context direction AUROC in N / H / L | cos(A, L-dir) | cos(H-dir, L-dir) |
+|---|---|---|---|---|---|---|
+| 12 | 1.00 / 1.00 | 0.99 | 1.00 | 1.00 / 1.00 / 1.00 | 0.43 | +0.72 |
+| 16 | 1.00 / 1.00 | 1.00 | 1.00 | 1.00 / 1.00 / 1.00 | 0.21 | +0.17 |
+| 17 | 0.90 / 0.97 | 0.83 | 0.56 | 1.00 / 1.00 / 1.00 | 0.06 | +0.01 |
+| 18 | 0.76 / 0.95 | 0.71 | 0.46 | 1.00 / 1.00 / 1.00 | 0.06 | −0.01 |
+| 20 | 0.53 / 0.75 | 0.56 | 0.13 | 1.00 / 1.00 / 1.00 | 0.04 | −0.10 |
+| 22 | 0.66 / 0.90 | 0.65 | 0.05 | 1.00 / 1.00 / 1.00 | 0.07 | −0.17 |
+| 24 | 0.51 / 0.79 | 0.49 | 0.04 | 0.99 / 0.99 / 1.00 | 0.04 | −0.22 |
+| 25 | 0.17 / 0.74 | 0.50 | 0.02 | 0.99 / 0.99 / 1.00 | 0.03 | −0.33 |
+
+*Split-half ceilings are ≥ 0.99 for every direction at these layers. The
+honest-context probe and the both-context direction are diff-of-means.
+LR = logistic regression, DoM = difference of means.*
+
+In honest contexts the probe is fine. In the lie context, late layers encode
+true-vs-false along a different direction. The honest-context direction is
+not merely uninformative there; it is reversed. A threshold refit cannot fix
+a reversed or orthogonal direction, so this failure is directional.
+
+**Caveat.** Inside L, "true vs false" is LT vs LF, and LF is also the only
+real lie. So the lie-context direction mixes falsehood with lie-ness. The
+both-context result constrains this: it reads the no-instruction context,
+which contains no lies, at AUROC ≥ 0.99.
+
+**A candidate mechanism, not established here.** The honest-context
+direction might mix *truth* with *"this answer is what the context asked
+for"*. Under a lie instruction the second component flips, because a false
+answer is now the compliant one. That flip is consistent with the inversion,
+with LT moving towards "false", and with averaging the two contexts
+recovering a context-invariant truth direction. A test would correlate probe
+scores with the model's own log-probability of the answer, or add a context
+where false answers are expected but not lies (e.g. "repeat this incorrect
+claim").
+
+### 4. Direction similarity across distributions
+
+![cosines](results/plots/cosine_vs_ceiling.png)
+
+The falsehood direction from A and B's pooled veracity direction share only
+about half their direction (cosine about 0.5 in late layers, against a
+ceiling of 0.999). Yet the probe transfers with AUROC ≈ 1. A low cosine
+alone does not predict a transfer failure; what matters is how the
+*evaluation contrast* projects onto the probe. The lie direction is closer to
+the instruction direction (cosine 0.75–0.81 from layer 15) than to the
+falsehood direction (0.19–0.27).
+
+### 5. Erasing directions, then retraining
+
+![orthogonalization](results/plots/orthogonalization.png)
+
+Projecting out a class-mean-difference direction (estimated on training
+cities) drives a fresh probe for that concept to chance. That is expected,
+because equal class means make w = 0 the logistic optimum. After erasing B's
+pooled veracity and instruction directions, a retrained lie probe still
+reaches 99.7%. But it is not lie-selective: it scores neutral true answers at
+1.24 and lie-instructed true answers at −0.57 (third panel of the grid
+figure). It exploits the context-dependent geometry of truth rather than a
+dedicated lie direction. Erasing A's falsehood direction alone leaves B's
+veracity fully decodable (99.6%), which is another sign that the two
+directions differ.
+
+### 6. Difference-in-differences
+
+Per city, Δ = x[LF] − x[LT] − x[HF] + x[HT]. Evaluated along its mean
+direction on held-out cities, the contrast is significant at every layer from
+3 on (sign-flip null p ≤ 10⁻⁴, the resolution of 10,000 flips), with d_z
+5.7–7.1 from layer 12. From layer 17 its
+direction has cosine −0.73 to −0.85 with B's veracity direction. In other words, the falsehood
+effect is much weaker under the lie instruction than under the truthful one.
+This is the same phenomenon as section 3, not independent evidence for a lie
+feature.
+
+## Methodological context
+
+This geometric framing adapts the analysis from my Master's thesis on
+argument representations. There, embeddings reached 88% linear SVM
+separability despite a silhouette score of −0.028 on DBSCAN clusters: a
+property can be cleanly linearly decodable without forming isolated
+clusters. Here, a related lesson: two directions with cosine about 0.5 can
+transfer perfectly on one contrast and fail completely on another.
 
 ## Limitations
-* Evaluated on a single 2B parameter model (`gemma-2-2b-it`); representations and geometric stability may behave differently at frontier model scale.
-* Subspace orthogonalization was conducted via single-direction projection; more comprehensive concept erasure methods (such as LEACE) could be applied to eliminate multi-dimensional linear correlations.
-* Evaluated on teacher-forced completions rather than multi-step agentic rollouts.
+
+* One small model (2B parameters). The geometry, and the layer at which the
+  lie context diverges, may differ at frontier scale.
+* **Teacher-forced (off-policy) answers.** The model never chose to lie. The
+  Anthropic study used on-policy lies, and on-policy activations may differ.
+* One fact domain (city → country), whose correct countries are skewed
+  (China is about 26%). There is one phrasing per instruction, so the
+  instruction effects may be phrasing-specific.
+* Inside the lie context, falsehood and lie-ness are perfectly confounded,
+  as discussed in section 3.
+* Erasure uses class-mean-difference directions (LEACE-style for one binary
+  concept at a time), not joint erasure of all concepts. The grid
+  normalisation divides by the held-out LF − HT gap. Rankings are
+  affine-invariant, but ratio values carry extra noise beyond the city
+  bootstrap CIs.
+* The detailed grid and tables are at layer 18. All per-layer metrics are in
+  `results/metrics.csv`.
+
+## What I would do next
+
+1. **On-policy lies.** Let the model generate under the lie instruction, keep
+   real lies, and test whether the honest-context direction still inverts.
+2. **Test the expectedness hypothesis.** Add "false but expected, not a lie"
+   contexts (quoting, role-play, a correction task), and correlate probe
+   scores with answer log-probability.
+3. **Train across contexts as a geometric regulariser.** Train probes on
+   pairs of contexts that disagree about what is expected, and test transfer
+   to held-out deception types, e.g. sycophancy, or the categories in the
+   Anthropic study.
+4. Repeat on larger models, and check Gemma Scope SAE features aligned with
+   the lie-context direction.
 
 ## Reproducibility
+
 ```bash
-git clone [https://github.com/berserkersap/deception-probe-geometry.git](https://github.com/berserkersap/deception-probe-geometry.git)
+git clone https://github.com/berserkersap/deception-probe-geometry.git
 cd deception-probe-geometry
-pip install -r requirements.txt
-python run_experiments.py --model google/gemma-2-2b-it --layers 10 14 18 22
+pip install -r requirements.txt     # CUDA 12.8 torch wheels; Python 3.14 tested
+python extract_activations.py       # ~2 min on an 8 GB RTX 5060; reuses data/pools.json
+python run_experiments.py           # CPU; writes results/ and results/plots/
+pytest -q                           # synthetic checks of every analysis
+```
+
+`data/pools.json` and `data/knowledge.csv` fix the city pools.
+`results/extraction_manifest.json` records model and data revisions, prompts
+and versions. Activations (about 400 MB) are not committed; they are
+regenerated by `extract_activations.py`.
+
+## Repository layout
+
+```text
+extract_activations.py   build datasets, knowledge filter, cache activations
+run_experiments.py       E0–E6 on cached activations, writes results/
+make_plots.py            redraw figures from results/
+src/data.py              dataset and prompt construction
+src/extract.py           model loading, final-token activations
+src/probes.py            diff-of-means / logistic probes, AUROC, threshold refit
+src/geometry.py          cosines, projections, difference-in-differences
+src/experiments.py       the experiments
+src/plots.py             figures
+tests/                   unit and synthetic end-to-end tests
+```

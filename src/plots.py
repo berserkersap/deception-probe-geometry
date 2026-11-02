@@ -86,7 +86,7 @@ def cosines(metrics, layer, path):
                         label=label)
 
     band("cos ceil A", "#9a9890", "split-half ceiling, A (5–95%); every\n"
-         "direction's ceiling is ≥0.97 from layer 4")
+         "direction's ceiling is ≥0.95 from layer 4")
     for i, (metric, label) in enumerate([
             ("cos A~lie", "falsehood(A) vs lie(B)"),
             ("cos A~veracity", "falsehood(A) vs veracity inside B"),
