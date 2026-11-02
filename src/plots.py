@@ -203,7 +203,7 @@ def context(metrics, layer, path):
         ("E6", "lr", "A auroc (N)", "falsehood probe (LR): no instruction", "-", 0),
         ("E6", "lr", "A auroc (H)", "falsehood probe (LR): truthful instr.", "-", 1),
         ("E6", "lr", "A auroc (L)", "falsehood probe (LR): lie instr.", "-", 2),
-        ("E6", "dom", "A auroc (L)", "falsehood probe (DoM): lie instr.", "--", 2),
+        ("E6", "dom", "A auroc (L)", "falsehood probe (DoM): lie instr.", "--", 3),
         ("E6", "dom", "NH probe auroc (L)",
          "honest-context probe (N+H, DoM): lie instr.", "-", 4),
         ("E6", "dom", "both-context probe auroc (N)",
