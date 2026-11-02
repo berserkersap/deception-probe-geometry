@@ -91,6 +91,26 @@ transfer, does its direction rotate, does an offset move the activations
 (fixable by re-thresholding), or does the probe track a confound such as
 statement falsehood or the lie instruction itself?
 
+## Related work
+
+* **Anthropic (2026), [*Fine-Tuned Lie Detectors Failed to Generalize*](https://alignment.anthropic.com/2026/lie-detectors/).**
+  Fine-tuned detectors reach about 0.95 AUROC in distribution but 0.70–0.75
+  on unseen lie types; they learn narrow, task-specific features. This
+  project asks the same question for linear probes, where the failure can be
+  inspected geometrically.
+* **Goldowsky-Dill et al. (2025), [*Detecting Strategic Deception Using Linear Probes*](https://arxiv.org/abs/2502.03407).**
+  Probes trained on instructed honest/deceptive pairs reach 0.96–0.999 AUROC
+  on Llama-3.3-70B, but are more sensitive to whether a scenario is
+  deception-related than to whether the response is deceptive. The six-cell
+  grid here measures that directly: the lie probe responds to the lie
+  instruction even when the answer is true.
+* **Bürger, Hamprecht & Nadler (2024), [*Truth is Universal: Robust Detection of Lies in LLMs*](https://arxiv.org/abs/2407.12831).**
+  Truth is encoded in a 2-D subspace: a general truth direction plus a
+  polarity direction that flips for negated statements. Probes trained only
+  on affirmative statements fail on negated ones, and training on both
+  recovers a general direction. The result here has the same structure, with
+  a lie instruction in place of negation.
+
 ## Experimental setup
 
 * **Model:** `gemma-2-2b-it` in bf16. It is loaded from the ungated
