@@ -259,15 +259,17 @@ def summarise_grid(df: pd.DataFrame, n_boot=1000, seed=0):
 
 # ---------------------------------------------------------------- E4
 
-def interaction(d: Data, n_perm=1000, seed=0):
-    """E4: is there a lie-specific direction beyond instruction + falsehood?
+def interaction(d: Data, n_perm=10000, seed=0):
+    """E4: is a lie more than instruction effect + falsehood effect?
 
-    Per city, delta = x[LF] - x[LT] - x[HF] + x[HT]. The mean delta over
-    training cities gives a direction; on held-out cities we measure the same
-    contrast along it, and compare with a within-city label-permutation null.
+    Per city, delta = x[LF] - x[LT] - x[HF] + x[HT], i.e. the falsehood effect
+    under the lie instruction minus the falsehood effect under the truthful one.
+    The mean delta over training cities gives a direction; on held-out cities
+    we measure the same contrast along it. Null (additivity): each city's
+    contrast is symmetric around zero, so we flip its sign at random.
     """
     rng = np.random.default_rng(seed)
-    contrasts, scores4, cos_A, cos_instr, cos_ver = [], [], [], [], []
+    contrasts, cos_A, cos_instr, cos_ver = [], [], [], []
     dA = _dom_A(d, np.ones(len(d.yA), bool))
     for f in np.unique(d.foldB):
         tr, te = d.foldB != f, d.foldB == f
@@ -282,16 +284,11 @@ def interaction(d: Data, n_perm=1000, seed=0):
         Xte, cte, gte = d.XB[te] @ u, d.cellB[te], d.gB[te]
         frame = pd.DataFrame({"g": gte, "c": cte, "s": Xte})
         wide = frame.pivot_table(index="g", columns="c", values="s")[list(DID_CELLS)]
-        scores4.append(wide.values)
         contrasts.append(wide.values @ np.array([1.0, -1.0, -1.0, 1.0]))
     contrast = np.concatenate(contrasts)
-    S = np.concatenate(scores4)                      # [cities, 4]
-    w = np.array([1.0, -1.0, -1.0, 1.0])
     observed = contrast.mean()
-    null = np.empty(n_perm)
-    for i in range(n_perm):
-        perm = np.argsort(rng.random(S.shape), axis=1)  # shuffle cells per city
-        null[i] = (np.take_along_axis(S, perm, 1) @ w).mean()
+    signs = rng.choice([-1.0, 1.0], size=(n_perm, len(contrast)))
+    null = (signs * contrast).mean(1)
     boots = np.array([contrast[rng.integers(0, len(contrast), len(contrast))].mean()
                       for _ in range(1000)])
     out = [
@@ -299,7 +296,7 @@ def interaction(d: Data, n_perm=1000, seed=0):
          "lo": float(np.quantile(boots, 0.025)),
          "hi": float(np.quantile(boots, 0.975))},
         {"metric": "did effect size d_z", "mean": float(observed / contrast.std(ddof=1))},
-        {"metric": "did permutation p",
+        {"metric": "did sign-flip p",
          "mean": float((1 + (null >= observed).sum()) / (1 + n_perm))},
         {"metric": "cos did~A", "mean": float(np.mean(cos_A))},
         {"metric": "cos did~instruction", "mean": float(np.mean(cos_instr))},
@@ -365,22 +362,33 @@ def _ver_dir(d: Data, rows, ctx):
     return d.XB[m & f].mean(0) - d.XB[m & ~f].mean(0)
 
 
+def _unit(v):
+    return v / np.linalg.norm(v)
+
+
 def context_veracity(d: Data, kind: str, n_reps=20, seed=0):
     """E6: does the falsehood probe still read true vs false *inside* each
-    instruction context, and if not, is that an offset or a rotation?
+    instruction context, and if not, is that an offset or a direction change?
 
-    Per context (N / H / L): A-probe AUROC, A-probe accuracy after refitting
-    only its threshold on held-out cities, and a fresh in-context probe as the
-    "is the information still there?" ceiling. Cosines between the
-    in-context veracity directions use disjoint city halves (matched N), with
-    each context's own split-half ceiling.
+    Per context (N / H / L), all on held-out cities:
+      - A-probe AUROC and A-probe accuracy after refitting only its threshold;
+      - a fresh in-context probe ("is the information still there?");
+      - "NH probe": trained on true-vs-false in the N and H contexts only, i.e.
+        the honest-context truth direction, scored inside L;
+      - "both-context probe": the sum of the unit H and L true-vs-false
+        directions (training cities), scored in every context. N is never used
+        to build it, and N contains no lies, so success there cannot come from
+        reading lie-ness.
+    Note that inside L, true-vs-false is LT vs LF and LF is the lie, so the
+    L direction mixes falsehood with lie-ness.
     """
     out = []
     yF = d.y_falseB
+    ctx_of = {c: np.char.startswith(d.cellB, c) for c in CONTEXTS}
     pA = fit_probe(kind, d.XA, d.yA)
     s = pA.score(d.XB)
     for ctx in CONTEXTS:
-        m = np.char.startswith(d.cellB, ctx)
+        m = ctx_of[ctx]
         refit = []
         for f in np.unique(d.foldB):
             tr, te = m & (d.foldB != f), m & (d.foldB == f)
@@ -390,12 +398,47 @@ def context_veracity(d: Data, kind: str, n_reps=20, seed=0):
         _rec(out, "E6", kind, f"A auroc ({ctx})", auroc(s[m], yF[m]))
         _rec(out, "E6", kind, f"A threshold-refit acc ({ctx})", refit)
         _rec(out, "E6", kind, f"fresh probe acc ({ctx})", fresh)
+
+    nh, both = [], {c: [] for c in CONTEXTS}
+    for f in np.unique(d.foldB):
+        tr, te = d.foldB != f, d.foldB == f
+        mNH = tr & ~ctx_of["L"]
+        p = fit_probe(kind, d.XB[mNH], yF[mNH])
+        mL = te & ctx_of["L"]
+        nh.append(auroc(p.score(d.XB[mL]), yF[mL]))
+        if kind == "dom":
+            w = _unit(_unit(_ver_dir(d, tr, "H")) + _unit(_ver_dir(d, tr, "L")))
+            for c in CONTEXTS:
+                m = te & ctx_of[c]
+                both[c].append(auroc(d.XB[m] @ w, yF[m]))
+    _rec(out, "E6", kind, "NH probe auroc (L)", nh)
     if kind != "dom":
         return out
+    for c in CONTEXTS:
+        _rec(out, "E6", kind, f"both-context probe auroc ({c})", both[c])
+
+    # Along A's direction: size of the true/false gap in L relative to H (raw units).
+    gap = {c: s[ctx_of[c] & (yF == 1)].mean() - s[ctx_of[c] & (yF == 0)].mean()
+           for c in CONTEXTS}
+    _rec(out, "E6", kind, "A score gap ratio L/H", gap["L"] / gap["H"])
+
+    # Full-data directions: decomposition and a robustness check against
+    # Gemma's few massive-activation dimensions (per-dimension standardised).
+    allr = np.ones(len(yF), bool)
+    V = {c: _ver_dir(d, allr, c) for c in CONTEXTS}
+    V["A"] = _dom_A(d, np.ones(len(d.yA), bool))
+    shared = _unit(_unit(V["H"]) + _unit(V["L"]))
+    flips = _unit(_unit(V["H"]) - _unit(V["L"]))
+    _rec(out, "E6", kind, "cos A~(H+L)", cosine(V["A"], shared))
+    _rec(out, "E6", kind, "cos A~(H-L)", cosine(V["A"], flips))
+    sd = d.XB.std(0) + 1e-6
+    for a, b in (("A", "N"), ("A", "H"), ("A", "L"), ("H", "L")):
+        _rec(out, "E6", kind, f"cos {a}~{b} (standardised)",
+             cosine(V[a] / sd, V[b] / sd))
 
     rng = np.random.default_rng(seed)
     pairs = [("A", c) for c in CONTEXTS] + [("N", "H"), ("N", "L"), ("H", "L")]
-    reps = {f"ceil {c}": [] for c in CONTEXTS}
+    reps = {f"ceil {c}": [] for c in ("A",) + tuple(CONTEXTS)}
     reps.update({f"{a}~{b}": [] for a, b in pairs})
     for _ in range(n_reps):
         a1, a2 = group_halves(d.gA, rng)
@@ -403,7 +446,7 @@ def context_veracity(d: Data, kind: str, n_reps=20, seed=0):
         h1 = {c: _ver_dir(d, b1, c) for c in CONTEXTS}
         h2 = {c: _ver_dir(d, b2, c) for c in CONTEXTS}
         h1["A"], h2["A"] = _dom_A(d, a1), _dom_A(d, a2)
-        for c in CONTEXTS:
+        for c in ("A",) + tuple(CONTEXTS):
             reps[f"ceil {c}"].append(cosine(h1[c], h2[c]))
         for a, b in pairs:
             reps[f"{a}~{b}"].append(0.5 * (cosine(h1[a], h2[b]) + cosine(h2[a], h1[b])))
@@ -413,4 +456,8 @@ def context_veracity(d: Data, kind: str, n_reps=20, seed=0):
                     "mean": float(v.mean()), "std": float(v.std(ddof=1)),
                     "p05": float(np.quantile(v, 0.05)),
                     "p95": float(np.quantile(v, 0.95))})
+    ceil = {k[5:]: np.mean(v) for k, v in reps.items() if k.startswith("ceil ")}
+    for a, b in pairs:
+        _rec(out, "E6", "dom", f"cos {a}~{b} / ceiling",
+             np.mean(reps[f"{a}~{b}"]) / np.sqrt(max(ceil[a] * ceil[b], 1e-12)))
     return out

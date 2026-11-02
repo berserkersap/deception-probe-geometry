@@ -53,6 +53,12 @@ def test_context_veracity_detects_rotation(world):
     assert _m(recs, "fresh probe acc (L)") > 0.9
     assert _m(recs, "cos ceil L") > 0.8
     assert abs(_m(recs, "cos A~L")) < 0.2 and _m(recs, "cos A~H") > 0.8
+    # Honest-context truth direction cannot read L (orthogonal here, not flipped)
+    assert abs(_m(recs, "NH probe auroc (L)") - 0.5) < 0.1
+    # ...but the sum of the H and L directions reads every context, incl. unseen N
+    for c in "NHL":
+        assert _m(recs, f"both-context probe auroc ({c})") > 0.9
+    assert abs(_m(recs, "A score gap ratio L/H")) < 0.2
 
 
 def test_all_experiments_run_and_are_sane(world):
@@ -64,7 +70,7 @@ def test_all_experiments_run_and_are_sane(world):
     assert _m(rot, "cos ceil A") > 0.8
     assert abs(_m(rot, "cos A~instruction")) < 0.2
     did = interaction(world, n_perm=200)
-    assert _m(did, "did permutation p") < 0.05     # L rotates truth: non-additive
+    assert _m(did, "did sign-flip p") < 0.05     # L rotates truth: non-additive
     e5 = orthogonalization(world, "lr")
     assert _m(e5, "instruction leakage acc | erase instr") < 0.6
     grid = summarise_grid(grid_scores(world, "dom"), n_boot=50)

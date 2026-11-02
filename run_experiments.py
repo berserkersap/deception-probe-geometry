@@ -1,4 +1,4 @@
-"""Run E0-E5 on cached activations (see extract_activations.py) and write
+"""Run E0-E6 on cached activations (see extract_activations.py) and write
 results/metrics.csv, results/grid_*.csv and results/summary.json.
 
 Analysis is CPU-only and takes a few minutes for all layers.

@@ -46,7 +46,7 @@ def _mark_layer(ax, layer):
 
 
 def transfer(metrics, layer, path):
-    fig, axes = plt.subplots(1, 2, figsize=(11, 4), sharey=True)
+    fig, axes = plt.subplots(1, 2, figsize=(11, 5.2), sharey=True)
     panels = [
         ("Threshold-free: AUROC", [
             ("A->A auroc", "A→A (in-distribution)"),
@@ -65,9 +65,9 @@ def transfer(metrics, layer, path):
         ax.axhline(0.5, color=INK_2, lw=1, ls="--", zorder=0)
         ax.set_title(title, loc="left")
         ax.set_xlabel("layer")
-        ax.legend(loc="lower right")
+        ax.legend(loc="upper left", bbox_to_anchor=(0.0, -0.15))
     axes[0].set_ylabel("held-out score (5-fold, grouped by city)")
-    axes[0].set_ylim(0.4, 1.02)
+    axes[0].set_ylim(0.3, 1.02)
     fig.suptitle("Falsehood probe (Distribution A) evaluated on instructed lies "
                  "(B: truthful+true vs lie+false), diff-of-means",
                  x=0.01, ha="left", fontsize=10, color=INK_2)
@@ -85,8 +85,8 @@ def cosines(metrics, layer, path):
         ax.fill_between(s.layer, s.p05, s.p95, color=color, alpha=0.18, lw=0,
                         label=label)
 
-    band("cos ceil A", SERIES[0], "split-half ceiling: A (5–95%)")
-    band("cos ceil lie", SERIES[1], "split-half ceiling: lie (5–95%)")
+    band("cos ceil A", "#9a9890", "split-half ceiling, A (5–95%); every\n"
+         "direction's ceiling is ≥0.97 from layer 4")
     for i, (metric, label) in enumerate([
             ("cos A~lie", "falsehood(A) vs lie(B)"),
             ("cos A~veracity", "falsehood(A) vs veracity inside B"),
@@ -97,10 +97,11 @@ def cosines(metrics, layer, path):
               label, s["std"].values)
     _mark_layer(ax, layer)
     ax.axhline(0, color=INK_2, lw=1)
-    ax.set_ylim(-0.2, 1.02)
+    ax.set_ylim(-0.35, 1.02)
     ax.set_xlabel("layer")
     ax.set_ylabel("cosine (diff-of-means directions)")
-    ax.set_title("Direction similarity vs. the split-half noise ceiling", loc="left")
+    ax.set_title("Direction similarity vs. the split-half noise ceiling "
+                 "(diff-of-means)", loc="left")
     ax.legend(loc="center left", bbox_to_anchor=(1.0, 0.5))
     fig.tight_layout()
     fig.savefig(path, dpi=150)
@@ -112,7 +113,7 @@ GRID_ROWS = [("N", "no instruction"), ("H", "truthful instr."), ("L", "lie instr
 
 def grid(detail, layer, path, panels):
     """3x2 heatmaps of normalised probe scores (HT = 0, LF = 1)."""
-    fig, axes = plt.subplots(1, len(panels), figsize=(3.6 * len(panels), 3.8))
+    fig, axes = plt.subplots(1, len(panels), figsize=(4.4 * len(panels), 4.3))
     for ax, (kind, erase, probe, title) in zip(np.atleast_1d(axes), panels):
         g = detail[(detail.kind == kind) & (detail.erase == erase) &
                    (detail.probe == probe)].set_index("cell")
@@ -145,7 +146,8 @@ def grid_by_layer(grid_layers, layer, path):
     cells = [("NF", "no instr. + false"), ("HF", "truthful instr. + false"),
              ("LT", "lie instr. + true"), ("residual", "additivity residual")]
     for ax, probe, title in zip(axes, ("A", "lie"),
-                                ("Falsehood probe (A)", "Lie probe (B: HT vs LF)")):
+                                ("Falsehood probe (A), diff-of-means",
+                                 "Lie probe (B: HT vs LF), diff-of-means")):
         g = grid_layers[grid_layers.probe == probe]
         for i, (cell, label) in enumerate(cells):
             s = g[g.cell == cell].sort_values("layer")
@@ -193,38 +195,44 @@ def orthogonalization(metrics, layer, path):
     plt.close(fig)
 
 
-def context(metrics, layer, path, kind="lr"):
-    """E6: veracity inside each instruction context."""
-    fig, axes = plt.subplots(1, 2, figsize=(12, 4.3))
+def context(metrics, layer, path):
+    """E6: true vs false inside each instruction context."""
+    fig, axes = plt.subplots(1, 2, figsize=(12.5, 5.4))
     ax = axes[0]
-    for i, (metric, label, style) in enumerate([
-            ("A auroc (N)", "falsehood probe AUROC: no instruction", "-"),
-            ("A auroc (H)", "falsehood probe AUROC: truthful instr.", "-"),
-            ("A auroc (L)", "falsehood probe AUROC: lie instr.", "-"),
-            ("A threshold-refit acc (L)", "lie instr.: threshold refit acc", "--"),
-            ("fresh probe acc (L)", "lie instr.: fresh in-context probe acc", ":")]):
-        x, y, sd = _series(metrics, "E6", kind, metric)
-        ax.plot(x, y, color=SERIES[i], ls=style, marker="o", markersize=4, label=label)
+    rows = [
+        ("E6", "lr", "A auroc (N)", "falsehood probe (LR): no instruction", "-", 0),
+        ("E6", "lr", "A auroc (H)", "falsehood probe (LR): truthful instr.", "-", 1),
+        ("E6", "lr", "A auroc (L)", "falsehood probe (LR): lie instr.", "-", 2),
+        ("E6", "dom", "A auroc (L)", "falsehood probe (DoM): lie instr.", "--", 2),
+        ("E6", "dom", "NH probe auroc (L)",
+         "honest-context probe (N+H, DoM): lie instr.", "-", 4),
+        ("E6", "dom", "both-context probe auroc (N)",
+         "both-context direction (H+L, DoM): no instr. (unseen)", "-", 5),
+    ]
+    for exp, kind, metric, label, style, ci in rows:
+        x, y, sd = _series(metrics, exp, kind, metric)
+        ax.plot(x, y, color=SERIES[ci], ls=style, marker="o", markersize=3.5,
+                label=label)
         if np.any(sd > 0):
-            ax.fill_between(x, y - sd, y + sd, color=SERIES[i], alpha=0.15, lw=0)
+            ax.fill_between(x, y - sd, y + sd, color=SERIES[ci], alpha=0.15, lw=0)
     ax.axhline(0.5, color=INK_2, lw=1, ls="--", zorder=0)
     _mark_layer(ax, layer)
-    ax.set_ylim(0.4, 1.02)
+    ax.set_ylim(0.0, 1.02)
     ax.set_xlabel("layer")
-    ax.set_ylabel("held-out score")
-    ax.set_title("Can the falsehood probe tell true from false answers?", loc="left")
-    ax.legend(loc="lower left", fontsize=8.5)
+    ax.set_ylabel("AUROC, true vs false answer (held-out cities)")
+    ax.set_title("Reading true vs false inside each context", loc="left")
+    ax.legend(loc="upper left", bbox_to_anchor=(0.0, -0.13), fontsize=8.5)
 
     ax = axes[1]
     e6 = metrics[(metrics.experiment == "E6") & (metrics.probe == "dom")]
     c = e6[e6.metric == "cos ceil L"].sort_values("layer")
-    ax.fill_between(c.layer, c.p05, c.p95, color=SERIES[2], alpha=0.18, lw=0,
-                    label="split-half ceiling, lie ctx (5–95%)")
+    ax.fill_between(c.layer, c.p05, c.p95, color="#9a9890", alpha=0.25, lw=0,
+                    label="split-half ceiling, lie context (5–95%)")
     for i, (metric, label) in enumerate([
-            ("cos A~N", "falsehood(A) vs veracity: no instr."),
-            ("cos A~H", "falsehood(A) vs veracity: truthful"),
-            ("cos A~L", "falsehood(A) vs veracity: lie"),
-            ("cos H~L", "veracity truthful vs lie")]):
+            ("cos A~N", "falsehood(A) vs no-instr. direction"),
+            ("cos A~H", "falsehood(A) vs truthful-instr. direction"),
+            ("cos A~L", "falsehood(A) vs lie-instr. direction"),
+            ("cos H~L", "truthful-instr. vs lie-instr. direction")]):
         s_ = e6[e6.metric == metric].sort_values("layer")
         _line(ax, s_.layer.values, s_["mean"].values, SERIES[[0, 1, 2, 4][i]],
               label, s_["std"].values)
@@ -232,9 +240,10 @@ def context(metrics, layer, path, kind="lr"):
     _mark_layer(ax, layer)
     ax.set_ylim(-0.35, 1.02)
     ax.set_xlabel("layer")
-    ax.set_ylabel("cosine (diff-of-means, disjoint city halves)")
-    ax.set_title("Direction of true-vs-false in each context", loc="left")
-    ax.legend(loc="lower left", fontsize=8.5)
+    ax.set_ylabel("cosine of true-vs-false directions")
+    ax.set_title("Direction of true vs false (diff-of-means, disjoint halves)",
+                 loc="left")
+    ax.legend(loc="upper left", bbox_to_anchor=(0.0, -0.13), fontsize=8.5)
     fig.tight_layout()
     fig.savefig(path, dpi=150)
     plt.close(fig)
