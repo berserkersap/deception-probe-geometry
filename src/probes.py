@@ -47,6 +47,10 @@ def logreg_probe(X, y, C=1e-2, seed=0) -> Probe:
     w = clf.coef_[0] / s
     t = mu @ w - clf.intercept_[0]
     n = np.linalg.norm(w)
+    if n < 1e-12:
+        # Equal class means (e.g. after erasing their difference) make w = 0
+        # the exact optimum: no linear signal. Predict the intercept's class.
+        return Probe(np.zeros_like(w), -1.0 if clf.intercept_[0] > 0 else 1.0)
     return Probe(w / n, float(t / n))
 
 
@@ -65,15 +69,21 @@ def auroc(scores, y) -> float:
 
 def best_threshold(scores, y) -> float:
     """Threshold that maximises accuracy of `scores > t` on (scores, y)."""
-    order = np.argsort(scores)
+    order = np.argsort(scores, kind="stable")
     s, ys = scores[order], y[order]
-    # Placing t just below s[k] predicts 1 for items k..n-1.
+    n = len(s)
+    # Split k predicts 1 for items k..n-1. Only splits between distinct scores
+    # (or at the ends) are realisable by a threshold.
     ones_at_or_above = np.concatenate([np.cumsum(ys[::-1])[::-1], [0]])
     zeros_below = np.concatenate([[0], np.cumsum(1 - ys)])
-    correct = ones_at_or_above + zeros_below
-    k = int(np.argmax(correct))
+    correct = (ones_at_or_above + zeros_below).astype(float)
+    valid = np.ones(n + 1, bool)
+    valid[1:n] = s[1:] > s[:-1]
+    correct[~valid] = -1
+    best = np.flatnonzero(correct == correct.max())
+    k = int(best[len(best) // 2])  # middle of a plateau of equally good splits
     if k == 0:
         return float(s[0] - 1.0)
-    if k == len(s):
+    if k == n:
         return float(s[-1] + 1.0)
     return float(0.5 * (s[k - 1] + s[k]))

@@ -7,11 +7,16 @@ def cosine(u, v) -> float:
     return float(u @ v / (np.linalg.norm(u) * np.linalg.norm(v)))
 
 
-def project_out(X, U):
-    """Remove the span of the row(s) of U from every row of X."""
-    U = np.atleast_2d(U)
-    Q, _ = np.linalg.qr(U.T)  # orthonormal basis of span(U), shape [d, k]
-    return X - (X @ Q) @ Q.T
+def project_out(X, U, rtol=1e-6):
+    """Remove the span of the row(s) of U from every row of X.
+
+    The basis comes from an SVD truncated at `rtol`, so collinear or nearly
+    collinear directions remove only the dimensions they actually span.
+    """
+    U = np.atleast_2d(np.asarray(U, dtype=np.float64))
+    _, S, Vt = np.linalg.svd(U, full_matrices=False)
+    Q = Vt[S > rtol * S[0]].T  # orthonormal basis of span(U), shape [d, k]
+    return (X - (X @ Q) @ Q.T).astype(np.result_type(X, np.float32))
 
 
 def group_halves(groups, rng):

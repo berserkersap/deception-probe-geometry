@@ -126,3 +126,46 @@ def test_did_cancels_additive_effects(rng):
     X2 = X + np.array([3 * extra if c == "LF" else 0 * extra for c in cells])
     _, delta2 = did_per_group(X2, cells, np.array(groups), ("LF", "LT", "HF", "HT"))
     assert cosine(delta2.mean(0), extra) > 0.95
+
+
+def test_logreg_raw_space_matches_sklearn_with_offset(rng):
+    """The (w, t) conversion must reproduce sklearn's decisions when the data
+    are far from the origin and the classes are imbalanced."""
+    from sklearn.linear_model import LogisticRegression
+    u = unit(rng)
+    y = (rng.random(500) < 0.3).astype(int)
+    X = rng.normal(size=(500, D)) + np.outer(y, u) * 1.5 + 50.0 + 20 * unit(rng)
+    p = logreg_probe(X, y, C=1e-2)
+    mu = X.mean(0)
+    s = np.sqrt(((X - mu) ** 2).mean())
+    clf = LogisticRegression(C=1e-2, max_iter=5000, random_state=0)
+    clf.fit((X - mu) / s, y)
+    assert (p.predict(X) == clf.predict((X - mu) / s)).all()
+    assert np.isclose(np.linalg.norm(p.w), 1.0)
+
+
+def test_logreg_with_no_signal_predicts_a_constant():
+    X = np.array([[1.0, 0.0], [-1.0, 0.0], [1.0, 0.0], [-1.0, 0.0]])
+    y = np.array([1, 1, 0, 0])               # identical class means
+    p = logreg_probe(X, y)
+    assert np.all(p.w == 0)
+    assert len(set(p.predict(X))) == 1
+
+
+def test_best_threshold_matches_brute_force_with_ties(rng):
+    for _ in range(200):
+        s = np.round(rng.normal(size=40), 1)  # many ties
+        y = (rng.random(40) < 0.5).astype(int)
+        cands = np.concatenate([[s.min() - 1], np.unique(s)])
+        best_acc = max(((s > c) == y).mean() for c in cands)
+        t = best_threshold(s, y)
+        assert ((s > t) == y).mean() == best_acc
+
+
+def test_project_out_collinear_removes_one_dimension(rng):
+    u = unit(rng)
+    X = rng.normal(size=(50, D))
+    a = project_out(X, u)
+    b = project_out(X, np.stack([u, 2 * u, u + 1e-9 * unit(rng)]))
+    assert np.allclose(a, b, atol=1e-6)
+    assert np.linalg.matrix_rank(X - b) == 1
