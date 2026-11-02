@@ -1,0 +1,29 @@
+# Private notes (not part of the published project)
+brainstorming.txt
+notes/
+
+# Python / environments
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.pytest_cache/
+
+# Secrets (e.g. HF_TOKEN)
+.env
+
+# Downloaded data and cached activations (large / regenerable)
+data/raw/
+activations/
+*.npy
+*.npz
+*.pt
+*.safetensors
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
