@@ -1,0 +1,749 @@
+city,correct_country,model_answer,known
+Krasnodar,Russia,Russia,True
+Lodz,Poland,Poland,True
+Maracay,Venezuela,Venezuela,True
+Baku,Azerbaijan,Azerbaijan,True
+Baoji,China,China,True
+Addis Ababa,Ethiopia,Ethiopia,True
+Abidjan,Côte d'Ivoire,Ivory Coast,True
+Yongzhou,China,China,True
+Nanchong,China,China,True
+Lu'an,China,China,True
+Jiaxing,China,China,True
+Huaihua,China,China,True
+Anqing,China,China,True
+Yingkou,China,China,True
+Panshan,China,China,True
+Guatemala City,Guatemala,Guatemala,True
+Bauchi,Nigeria,Nigeria,True
+Tokyo,Japan,Japan,True
+Mombasa,Kenya,Kenya,True
+Ulsan,South Korea,South Korea,True
+Warangal,India,India,True
+Tiruchirappalli,India,India,True
+Nowrangapur,India,India,True
+Sambhaji Nagar,India,India,True
+Ajmer,India,India,True
+Rohini,India,India,True
+Serang,Indonesia,Indonesia,True
+Niigata,Japan,Japan,True
+Marrakesh,Morocco,Morocco,True
+Makati City,the Philippines,Philippines,True
+Tirunelveli,India,India,True
+Thane,India,India,True
+Solapur,India,India,True
+Najafgarh,India,India,True
+Borivli,India,India,True
+Zhabei,China,China,True
+Liaocheng,China,China,True
+Jiaozhou,China,China,True
+Guilin,China,China,True
+Chaozhou,China,China,True
+Panzhihua,China,China,True
+Bucaramanga,Colombia,Colombia,True
+Niamey,Niger,Niger,True
+Sokoto,Nigeria,Nigeria,True
+Abuja,Nigeria,Nigeria,True
+South Tangerang,Indonesia,Indonesia,True
+Odesa,Ukraine,Ukraine,True
+Fort Worth,the United States,United States,True
+Boumerdes,Algeria,Algeria,True
+Asmara,Eritrea,Eritrea,True
+Santiago de Queretaro,Mexico,Mexico,True
+Perm,Russia,Russia,True
+Jeddah,Saudi Arabia,Saudi Arabia,True
+Konya,Turkey,Turkey,True
+Macapa,Brazil,Brazil,True
+Belo Horizonte,Brazil,Brazil,True
+Poznan,Poland,Poland,True
+Linyi,China,China,True
+Hohhot,China,China,True
+Malacca,Malaysia,Malaysia,True
+Busan,South Korea,South Korea,True
+Seongnam-si,South Korea,South Korea,True
+Matsuyama,Japan,Japan,True
+Suwon,South Korea,South Korea,True
+Incheon,South Korea,South Korea,True
+Hwaseong-si,South Korea,South Korea,True
+Changwon,South Korea,South Korea,True
+Bamako,Mali,Mali,True
+Acapulco de Juarez,Mexico,Mexico,True
+Mosul,Iraq,Iraq,True
+Basrah,Iraq,Iraq,True
+Qom,Iran,Iran,True
+Torreon,Mexico,Mexico,True
+Beira,Mozambique,Mozambique,True
+Naucalpan de Juarez,Mexico,Mexico,True
+Dehra Dun,India,India,True
+Bhubaneswar,India,India,True
+Ahvaz,Iran,Iran,True
+Kumasi,Ghana,Ghana,True
+Palembang,Indonesia,Indonesia,True
+Novokuznetsk,Russia,Russia,True
+Izmir,Turkey,Turkey,True
+Lahore,Pakistan,Pakistan,True
+Zhenjiang,China,China,True
+Zhaotong,China,China,True
+Weifang,China,China,True
+Tianjin,China,China,True
+Shaoxing,China,China,True
+Hangzhou,China,China,True
+Mudanjiang,China,China,True
+Anshan,China,China,True
+Porto Velho,Brazil,Brazil,True
+N'Djamena,Chad,Chad,True
+Kayseri,Turkey,Turkey,True
+Marseille,France,France,True
+Lyon,France,France,True
+Suez,Egypt,Egypt,True
+Giza,Egypt,Egypt,True
+Naberezhnyye Chelny,Russia,Russia,True
+Mukalla,Yemen,Yemen,True
+Harare,Zimbabwe,Zimbabwe,True
+Sevastopol,Ukraine,Ukraine,True
+Lipetsk,Russia,Russia,True
+Istanbul,Turkey,Turkey,True
+Callao,Peru,Peru,True
+Cebu City,the Philippines,Philippines,True
+Tashkent,Uzbekistan,Uzbekistan,True
+Maturin,Venezuela,Venezuela,True
+Hanoi,Vietnam,Vietnam,True
+Xuzhou,China,China,True
+Cucuta,Colombia,Colombia,True
+Santo Domingo Oeste,the Dominican Republic,Dominican Republic,True
+Tangshan,China,China,True
+Neijiang,China,China,True
+Linfen,China,China,True
+Yiwu,China,China,True
+Qiqihar,China,China,True
+Baotou,China,China,True
+Aparecida de Goiania,Brazil,Brazil,True
+Kinshasa,the Democratic Republic of the Congo,Democratic Republic of Congo,True
+Ciudad Nezahualcoyotl,Mexico,Mexico,True
+Mexicali,Mexico,Mexico,True
+Ciudad Juarez,Mexico,Mexico,True
+Kampung Baru Subang,Malaysia,Malaysia,True
+Subang Jaya,Malaysia,Malaysia,True
+Maputo,Mozambique,Mozambique,True
+Kumamoto,Japan,Japan,True
+Daegu,South Korea,South Korea,True
+Vilnius,Lithuania,Lithuania,True
+Ranchi,India,India,True
+Jalandhar,India,India,True
+Bhayandar,India,India,True
+Bareilly,India,India,True
+Santo Domingo Este,the Dominican Republic,Dominican Republic,True
+Al Fayyum,Egypt,Egypt,True
+Rizhao,China,China,True
+"Mianzhu, Deyang, Sichuan",China,China,True
+Jabalpur,India,India,True
+Bilimora,India,India,True
+Accra,Ghana,Ghana,True
+Bogor,Indonesia,Indonesia,True
+Nyala,Sudan,Sudan,True
+Eskisehir,Turkey,Turkey,True
+Antalya,Turkey,Turkey,True
+Dnipro,Ukraine,Ukraine,True
+Khabarovsk,Russia,Russia,True
+Irkutsk,Russia,Russia,True
+Libreville,Gabon,Gabon,True
+Santiago de los Caballeros,the Dominican Republic,Dominican Republic,True
+Algiers,Algeria,Algeria,True
+Nashik,India,India,True
+Karol Bagh,India,India,True
+Orumiyeh,Iran,Iran,True
+Zahedan,Iran,Iran,True
+Xuchang,China,China,True
+Changde,China,China,True
+Shaoguan,China,China,True
+Jilin,China,China,True
+Manaus,Brazil,Brazil,True
+Jaboatao dos Guararapes,Brazil,Brazil,True
+Kakamega,Kenya,Kenya,True
+Agadir,Morocco,Morocco,True
+Ulan Bator,Mongolia,Mongolia,True
+Muscat,Oman,Oman,True
+Paranaque City,the Philippines,Philippines,True
+Rahim Yar Khan,Pakistan,Pakistan,True
+Balikpapan,Indonesia,Indonesia,True
+Guarulhos,Brazil,Brazil,True
+Volgograd,Russia,Russia,True
+Ulyanovsk,Russia,Russia,True
+Kota Bharu,Malaysia,Malaysia,True
+Sarajevo,Bosnia and Herzegovina,Bosnia and Herzegovina,True
+Maceio,Brazil,Brazil,True
+Joao Pessoa,Brazil,Brazil,True
+Shangqiu,China,China,True
+Zhangye,China,China,True
+Xuanzhou,China,China,True
+Wuhan,China,China,True
+Nanchang,China,China,True
+Luancheng,China,China,True
+Liuzhou,China,China,True
+Guangyuan,China,China,True
+Bijie,China,China,True
+Zhoushan,China,China,True
+Hegang,China,China,True
+E'zhou,China,China,True
+Campos dos Goytacazes,Brazil,Brazil,True
+Bucharest,Romania,Romania,True
+Ansan-si,South Korea,South Korea,True
+Casablanca,Morocco,Morocco,True
+Coyoacan,Mexico,Mexico,True
+Oyo,Nigeria,Nigeria,True
+Pasig City,the Philippines,Philippines,True
+Kano,Nigeria,Nigeria,True
+Bahawalpur,Pakistan,Pakistan,True
+New Kingston,Jamaica,Jamaica,True
+Pyongyang,North Korea,North Korea,True
+Shymkent,Kazakhstan,Kazakhstan,True
+Tlalpan,Mexico,Mexico,True
+Kemerovo,Russia,Russia,True
+Zaporizhzhya,Ukraine,Ukraine,True
+Iztapalapa,Mexico,Mexico,True
+Aguascalientes,Mexico,Mexico,True
+Kuala Lumpur,Malaysia,Malaysia,True
+Warri,Nigeria,Nigeria,True
+Peshawar,Pakistan,Pakistan,True
+Kagoshima,Japan,Japan,True
+Hamamatsu,Japan,Japan,True
+Cheongju-si,South Korea,South Korea,True
+Ghaziabad,India,India,True
+Cochin,India,India,True
+Ahmedabad,India,India,True
+Sulaymaniyah,Iraq,Iraq,True
+Hamadan,Iran,Iran,True
+Omsk,Russia,Russia,True
+Ta'if,Saudi Arabia,Saudi Arabia,True
+Stockholm,Sweden,Sweden,True
+Siliguri,India,India,True
+Baghdad,Iraq,Iraq,True
+Al Basrah al Qadimah,Iraq,Iraq,True
+Krakow,Poland,Poland,True
+Tolyatti,Russia,Russia,True
+Bandar Lampung,Indonesia,Indonesia,True
+Tucson,the United States,United States,True
+Can Tho,Vietnam,Vietnam,True
+Bouake,Côte d'Ivoire,Ivory Coast,True
+Abobo,Côte d'Ivoire,Ivory Coast,True
+Shihezi,China,China,True
+Yunfu,China,China,True
+Xiangtan,China,China,True
+Qionghai,China,China,True
+Chuzhou,China,China,True
+Taiz,Yemen,Yemen,True
+Tembisa,South Africa,South Africa,True
+Puente Alto,Chile,Chile,True
+Zhumadian,China,China,True
+Zhengzhou,China,China,True
+Ya'an,China,China,True
+Xianyang,China,China,True
+Weihai,China,China,True
+Pingdingshan,China,China,True
+Bengbu,China,China,True
+Zhangjiakou,China,China,True
+Mississauga,Canada,Canada,True
+Yerevan,Armenia,Armenia,True
+Albuquerque,the United States,United States,True
+New South Memphis,the United States,United States,True
+Calgary,Canada,Canada,True
+Kisangani,the Democratic Republic of the Congo,Democratic Republic of Congo,True
+Bobo-Dioulasso,Burkina Faso,Burkina Faso,True
+Sao Jose dos Campos,Brazil,Brazil,True
+Florianopolis,Brazil,Brazil,True
+Cuiaba,Brazil,Brazil,True
+Chattogram,Bangladesh,Bangladesh,True
+Nanjing,China,China,True
+Kaifeng,China,China,True
+Heze,China,China,True
+Sendai,Japan,Japan,True
+Jeonju,South Korea,South Korea,True
+Almaty,Kazakhstan,Kazakhstan,True
+Pimpri,India,India,True
+Navi Mumbai,India,India,True
+Novosibirsk,Russia,Russia,True
+Goeteborg,Sweden,Sweden,True
+Bursa,Turkey,Turkey,True
+Dar es Salaam,Tanzania,Tanzania,True
+Mbuji-Mayi,the Democratic Republic of the Congo,Democratic Republic of Congo,True
+Goiania,Brazil,Brazil,True
+Yaroslavl,Russia,Russia,True
+Kigali,Rwanda,Rwanda,True
+Diyarbakir,Turkey,Turkey,True
+Tyumen,Russia,Russia,True
+Orenburg,Russia,Russia,True
+Osaka,Japan,Japan,True
+Sapporo,Japan,Japan,True
+Kimhae,South Korea,South Korea,True
+Cheonan,South Korea,South Korea,True
+San Luis Potosi,Mexico,Mexico,True
+Culiacan,Mexico,Mexico,True
+Kaduna,Nigeria,Nigeria,True
+General Santos,the Philippines,Philippines,True
+Ebute Ikorodu,Nigeria,Nigeria,True
+Benin City,Nigeria,Nigeria,True
+Kanpur,India,India,True
+Indore,India,India,True
+Zunyi,China,China,True
+Zhanjiang,China,China,True
+Wenzhou,China,China,True
+Luohe,China,China,True
+Kunming,China,China,True
+Cixi,China,China,True
+Hanzhong,China,China,True
+Guangzhou,China,China,True
+Munich,Germany,Germany,True
+Pekanbaru,Indonesia,Indonesia,True
+Malang,Indonesia,Indonesia,True
+Douala,Cameroon,Cameroon,True
+Kashgar,China,China,True
+Zibo,China,China,True
+Tianshui,China,China,True
+Laibin,China,China,True
+Deyang,China,China,True
+Teresina,Brazil,Brazil,True
+Leipzig,Germany,Germany,True
+Duesseldorf,Germany,Germany,True
+Zagreb,Croatia,Croatia,True
+Hannover,Germany,Germany,True
+Penza,Russia,Russia,True
+Matola,Mozambique,Mozambique,True
+Enugu,Nigeria,Nigeria,True
+Shizuoka,Japan,Japan,True
+Himeji,Japan,Japan,True
+Hamhung,North Korea,North Korea,True
+Seoul,South Korea,South Korea,True
+Meerut,India,India,True
+Hubli,India,India,True
+Dubai,the United Arab Emirates,United Arab Emirates,True
+Astrakhan,Russia,Russia,True
+Aleppo,Syria,Syria,True
+Ar Raqqah,Syria,Syria,True
+Saint Petersburg,Russia,Russia,True
+Johannesburg,South Africa,South Africa,True
+Wanzhou,China,China,True
+Anyang,China,China,True
+Qinhuangdao,China,China,True
+Meizhou,China,China,True
+Yangjiang,China,China,True
+Beijing,China,China,True
+Shah Alam,Malaysia,Malaysia,True
+Vadodara,India,India,True
+Sangli,India,India,True
+Guwahati,India,India,True
+Prayagraj,India,India,True
+Aligarh,India,India,True
+Kermanshah,Iran,Iran,True
+Semarang,Indonesia,Indonesia,True
+Khulna,Bangladesh,Bangladesh,True
+Korla,China,China,True
+Zaozhuang,China,China,True
+Xiamen,China,China,True
+Shenzhen,China,China,True
+Maoming,China,China,True
+Anshun,China,China,True
+Siping,China,China,True
+Shuangyashan,China,China,True
+Jiamusi,China,China,True
+Minsk,Belarus,Belarus,True
+Lubumbashi,the Democratic Republic of the Congo,Democratic Republic of Congo,True
+San Miguel de Tucuman,Argentina,Argentina,True
+Cotonou,Benin,Benin,True
+Comilla,Bangladesh,Bangladesh,True
+Sao Bernardo do Campo,Brazil,Brazil,True
+Feira de Santana,Brazil,Brazil,True
+Porto Alegre,Brazil,Brazil,True
+Juiz de Fora,Brazil,Brazil,True
+Nagoya,Japan,Japan,True
+Al Ahmadi,Kuwait,Kuwait,True
+Beirut,Lebanon,Lebanon,True
+Lilongwe,Malawi,Malawi,True
+Ecatepec de Morelos,Mexico,Mexico,True
+Cancun,Mexico,Mexico,True
+Isfahan,Iran,Iran,True
+Conakry,Guinea,Guinea,True
+Petaling Jaya,Malaysia,Malaysia,True
+Zaria,Nigeria,Nigeria,True
+Cimahi,Indonesia,Indonesia,True
+Arequipa,Peru,Peru,True
+Multan,Pakistan,Pakistan,True
+Bahcelievler,Turkey,Turkey,True
+Saratov,Russia,Russia,True
+Kharkiv,Ukraine,Ukraine,True
+Malatya,Turkey,Turkey,True
+Lviv,Ukraine,Ukraine,True
+Kyiv,Ukraine,Ukraine,True
+Kitakyushu,Japan,Japan,True
+Onitsha,Nigeria,Nigeria,True
+Anyang-si,South Korea,South Korea,True
+Kobe,Japan,Japan,True
+Chiclayo,Peru,Peru,True
+Phnom Penh,Cambodia,Cambodia,True
+Nouakchott,Mauritania,Mauritania,True
+Vijayawada,India,India,True
+Theni,India,India,True
+Narela,India,India,True
+Quetta,Pakistan,Pakistan,True
+Chennai,India,India,True
+Changshu,China,China,True
+Tehran,Iran,Iran,True
+Bayannur,China,China,True
+Barranquilla,Colombia,Colombia,True
+Budapest,Hungary,Hungary,True
+Pontianak,Indonesia,Indonesia,True
+Recife,Brazil,Brazil,True
+Contagem,Brazil,Brazil,True
+Port Said,Egypt,Egypt,True
+Asyut,Egypt,Egypt,True
+Ziyang,China,China,True
+Yinchuan,China,China,True
+Zhangjiagang,China,China,True
+Shanghai,China,China,True
+Jieyang,China,China,True
+Longyan,China,China,True
+Dandong,China,China,True
+Frankfurt am Main,Germany,Germany,True
+Lusaka,Zambia,Zambia,True
+Aden,Yemen,Yemen,True
+Jaboatao,Brazil,Brazil,True
+Aracaju,Brazil,Brazil,True
+Londrina,Brazil,Brazil,True
+Zigong,China,China,True
+Kunshan,China,China,True
+Yichang,China,China,True
+Sanming,China,China,True
+Guang'an,China,China,True
+Ma'anshan,China,China,True
+Dongying,China,China,True
+Fushun,China,China,True
+Rajshahi,Bangladesh,Bangladesh,True
+Rangpur,Bangladesh,Bangladesh,True
+Dortmund,Germany,Germany,True
+Detroit,the United States,United States,True
+Latakia,Syria,Syria,True
+Ashgabat,Turkmenistan,Turkmenistan,True
+Maracaibo,Venezuela,Venezuela,True
+Erode,India,India,True
+Mumbai,India,India,True
+Nasiriyah,Iraq,Iraq,True
+Kahriz,Iran,Iran,True
+Surakarta,Indonesia,Indonesia,True
+Banjarmasin,Indonesia,Indonesia,True
+Vladivostok,Russia,Russia,True
+Adana,Turkey,Turkey,True
+Voronezh,Russia,Russia,True
+Namangan,Uzbekistan,Uzbekistan,True
+Ordos,China,China,True
+Moradabad,India,India,True
+Bengaluru,India,India,True
+Shivaji Nagar,India,India,True
+Turin,Italy,Italy,True
+Okayama,Japan,Japan,True
+Daejeon,South Korea,South Korea,True
+Battagram,Pakistan,Pakistan,True
+Yaounde,Cameroon,Cameroon,True
+Zhangzhou,China,China,True
+Yangquan,China,China,True
+Sanya,China,China,True
+Foshan,China,China,True
+Sharjah,the United Arab Emirates,United Arab Emirates,True
+Al Ain City,the United Arab Emirates,United Arab Emirates,True
+Kalininskiy,Russia,Russia,True
+Mersin,Turkey,Turkey,True
+Guayaquil,Ecuador,Ecuador,True
+Tegucigalpa,Honduras,Honduras,True
+Koeln,Germany,Germany,True
+Nuernberg,Germany,Germany,True
+Zarqa,Jordan,Jordan,True
+Riga,Latvia,Latvia,True
+Nanded,India,India,True
+Gwalior,India,India,True
+Dombivli,India,India,True
+Kallakurichi,India,India,True
+Bekasi,Indonesia,Indonesia,True
+Johor Bahru,Malaysia,Malaysia,True
+Santa Maria Chimalhuacan,Mexico,Mexico,True
+Urumqi,China,China,True
+Qingdao,China,China,True
+Sofia,Bulgaria,Bulgaria,True
+Nova Iguacu,Brazil,Brazil,True
+Abeokuta,Nigeria,Nigeria,True
+Amman,Jordan,Jordan,True
+Hachioji,Japan,Japan,True
+Fukuoka,Japan,Japan,True
+Goyang-si,South Korea,South Korea,True
+Meknes,Morocco,Morocco,True
+Antananarivo,Madagascar,Madagascar,True
+Kalyan,India,India,True
+Jaipur,India,India,True
+Guntur,India,India,True
+Bhilai,India,India,True
+Bhavnagar,India,India,True
+Amravati,India,India,True
+Shiraz,Iran,Iran,True
+Lome,Togo,Togo,True
+Erzurum,Turkey,Turkey,True
+Seattle,the United States,United States,True
+Barquisimeto,Venezuela,Venezuela,True
+Kryvyy Rih,Ukraine,Ukraine,True
+Krasnoyarsk,Russia,Russia,True
+Quzhou,China,China,True
+Pingliang,China,China,True
+Puning,China,China,True
+Huzhou,China,China,True
+Chizhou,China,China,True
+Chengdu,China,China,True
+Cangzhou,China,China,True
+Samarinda,Indonesia,Indonesia,True
+Helsinki,Finland,Finland,True
+Khabarovsk Vtoroy,Russia,Russia,True
+Wroclaw,Poland,Poland,True
+Oslo,Norway,Norway,True
+Caloocan City,the Philippines,Philippines,True
+Ryazan',Russia,Russia,True
+Ciudad Guayana,Venezuela,Venezuela,True
+Ho Chi Minh City,Vietnam,Vietnam,True
+Al Hudaydah,Yemen,Yemen,True
+Soweto,South Africa,South Africa,True
+Benoni,South Africa,South Africa,True
+Wuzhou,China,China,True
+Wanxian,China,China,True
+Qinzhou,China,China,True
+Wuwei,China,China,True
+Hefei,China,China,True
+Handan,China,China,True
+Jiangyin,China,China,True
+Brazzaville,the Republic of the Congo,Republic of Congo,True
+Sorocaba,Brazil,Brazil,True
+Aktobe,Kazakhstan,Kazakhstan,True
+Chisinau,Moldova,Moldova,True
+Tiruppur,India,India,True
+Kozhikode,India,India,True
+Asansol,India,India,True
+Suizhou,China,China,True
+Jingmen,China,China,True
+Huangshi,China,China,True
+Huaibei,China,China,True
+Hebi,China,China,True
+Benxi,China,China,True
+Fortaleza,Brazil,Brazil,True
+Antwerpen,Belgium,Belgium,True
+Pikine,Senegal,Senegal,True
+Dakar,Senegal,Senegal,True
+Faisalabad,Pakistan,Pakistan,True
+Kyoto,Japan,Japan,True
+Port Harcourt,Nigeria,Nigeria,True
+Makhachkala,Russia,Russia,True
+Thiruvananthapuram,India,India,True
+Madurai,India,India,True
+Abu Ghurayb,Iraq,Saudi Arabia,False
+Karaj,Iran,Iran,True
+Kampala,Uganda,Uganda,True
+Chicago,the United States,United States,True
+Milwaukee,the United States,United States,True
+Bloemfontein,South Africa,South Africa,True
+Uberlandia,Brazil,Brazil,True
+Curitiba,Brazil,Brazil,True
+Rio de Janeiro,Brazil,Brazil,True
+Ribeirao Preto,Brazil,Brazil,True
+The Bronx,the United States,United States,True
+Samarkand,Uzbekistan,Uzbekistan,True
+Da Nang,Vietnam,Vietnam,True
+Tomsk,Russia,Russia,True
+Najran,Saudi Arabia,Saudi Arabia,True
+Bangkok,Thailand,Thailand,True
+Oklahoma City,the United States,United States,True
+Izhevsk,Russia,Russia,True
+Madinat an Nasr,Egypt,Egypt,True
+Yibin,China,China,True
+Sanmenxia,China,China,True
+Rui'an,China,China,True
+Ningbo,China,China,True
+Jiujiang,China,China,True
+Jiaozuo,China,China,True
+Jiangmen,China,China,True
+Huizhou,China,China,True
+Harbin,China,China,True
+Herat,Afghanistan,Afghanistan,True
+Kleinzschocher,Germany,Germany,True
+Davao,the Philippines,Philippines,True
+Sargodha,Pakistan,Pakistan,True
+Islamabad,Pakistan,Pakistan,True
+Zapopan,Mexico,Mexico,True
+Visakhapatnam,India,India,True
+Rourkela,India,India,True
+Dhanbad,India,India,True
+Bokaro,India,India,True
+Tabriz,Iran,Iran,True
+Tlaquepaque,Mexico,Mexico,True
+Victoria de Durango,Mexico,Mexico,True
+Kota Kinabalu,Malaysia,Malaysia,True
+Nairobi,Kenya,Kenya,True
+Taguig,the Philippines,Philippines,True
+Rajkot,India,India,True
+Pune,India,India,True
+Ludhiana,India,India,True
+Jamshedpur,India,India,True
+Bhiwandi,India,India,True
+Erbil,Iraq,Iraq,True
+Chelyabinsk,Russia,Russia,True
+Uskudar,Turkey,Turkey,True
+Bagcilar,Turkey,Turkey,True
+Quezon City,the Philippines,Philippines,True
+Mexico City,Mexico,Mexico,True
+Leon de los Aldama,Mexico,Mexico,True
+Fes,Morocco,Morocco,True
+Surat,India,India,True
+Barnaul,Russia,Russia,True
+Buraydah,Saudi Arabia,Saudi Arabia,True
+Bikaner,India,India,True
+Mogadishu,Somalia,Somalia,True
+Homs,Syria,Syria,True
+Port-au-Prince,Haiti,Haiti,True
+Thuan An,Vietnam,Vietnam,True
+Sanaa,Yemen,Yemen,True
+Pretoria,South Africa,South Africa,True
+Pietermaritzburg,South Africa,South Africa,True
+Abu Dhabi,the United Arab Emirates,United Arab Emirates,True
+Sao Paulo,Brazil,Brazil,True
+Lianyungang,China,China,True
+Xiaogan,China,China,True
+Taicang,China,China,True
+Guiyang,China,China,True
+Ganzhou,China,China,True
+Shangyu,China,China,True
+Jambi City,Indonesia,Indonesia,True
+Indianapolis,the United States,United States,True
+New York City,the United States,United States,True
+Bulawayo,Zimbabwe,Zimbabwe,True
+Santiago de Cuba,Cuba,Cuba,True
+Quito,Ecuador,Ecuador,True
+Shubra al Khaymah,Egypt,Egypt,True
+Al Mahallah al Kubra,Egypt,Egypt,True
+Suining,China,China,True
+Guankou,China,China,True
+Langfang,China,China,True
+Jinan,China,China,True
+Guigang,China,China,True
+Dalian,China,China,True
+Chongqing,China,China,True
+Homyel',Belarus,Ukraine,False
+Winnipeg,Canada,Canada,True
+Klang,Malaysia,Malaysia,True
+Irbid,Jordan,Jordan,True
+Bishkek,Kyrgyzstan,Kyrgyzstan,True
+Muzaffarabad,Pakistan,Pakistan,True
+Kotli,Pakistan,Pakistan,True
+Nagpur,India,India,True
+Kolhapur,India,India,True
+Cuttack,India,India,True
+Makassar,Indonesia,Indonesia,True
+Yekaterinburg,Russia,Russia,True
+Dammam,Saudi Arabia,Saudi Arabia,True
+Dushanbe,Tajikistan,Tajikistan,True
+Gaziantep,Turkey,Turkey,True
+Asuncion,Paraguay,Paraguay,True
+Tebessa,Algeria,Algeria,True
+Zhuzhou,China,China,True
+Xining,China,China,True
+Tanggu,China,China,True
+Shantou,China,China,True
+Shangluo,China,China,True
+Putian,China,China,True
+Luzhou,China,China,True
+Lanzhou,China,China,True
+Chenzhou,China,China,True
+Baise,China,China,True
+Shenyang,China,China,True
+Daqing,China,China,True
+Brasilia,Brazil,Brazil,True
+Kandahar,Afghanistan,Afghanistan,True
+Gold Coast,Australia,Australia,True
+Ouagadougou,Burkina Faso,Burkina Faso,True
+Duque de Caxias,Brazil,Brazil,True
+Hiroshima,Japan,Japan,True
+Saitama,Japan,Japan,True
+Mandalay,Myanmar,Myanmar,True
+Nampula,Mozambique,Mozambique,True
+Mysore,India,India,True
+Coimbatore,India,India,True
+Chandigarh,India,India,True
+Amritsar,India,India,True
+Arak,Iran,Iran,True
+Ilorin,Nigeria,Nigeria,True
+Omdurman,Sudan,Sudan,True
+Khartoum,Sudan,Sudan,True
+Gujranwala,Pakistan,Pakistan,True
+Nizhniy Novgorod,Russia,Russia,True
+Zhaoqing,China,China,True
+Xianning,China,China,True
+Suqian,China,China,True
+Tonghua,China,China,True
+Hezhou,China,China,True
+Grosszschocher,Germany,Austria,False
+San Pedro Sula,Honduras,Honduras,True
+Queens,the United States,United States,True
+Caracas,Venezuela,Venezuela,True
+Bien Hoa,Vietnam,Vietnam,True
+Durban,South Africa,South Africa,True
+Kawaguchi,Japan,Japan,True
+Bucheon-si,South Korea,South Korea,True
+Tangier,Morocco,Morocco,True
+Nay Pyi Taw,Myanmar,Myanmar,True
+Ulhasnagar,India,India,True
+Faridabad,India,India,True
+Kolkata,India,India,True
+Karbala,Iraq,Iraq,True
+Jakarta,Indonesia,Indonesia,True
+Denpasar,Indonesia,Indonesia,True
+Batam,Indonesia,Indonesia,True
+Liupanshui,China,China,True
+Shangrao,China,China,True
+Xingtai,China,China,True
+Qujing,China,China,True
+Nanning,China,China,True
+Huainan,China,China,True
+Binzhou,China,China,True
+Fuxin,China,China,True
+Quebec,Canada,Canada,True
+Mazar-e Sharif,Afghanistan,Afghanistan,True
+Mar del Plata,Argentina,Argentina,True
+Salta,Argentina,Argentina,True
+Bujumbura,Burundi,Burundi,True
+Ankara,Turkey,Turkey,True
+Esenler,Turkey,Turkey,True
+Cankaya,Turkey,Turkey,True
+Ufa,Russia,Russia,True
+Rawalpindi,Pakistan,Pakistan,True
+Karachi,Pakistan,Pakistan,True
+Tijuana,Mexico,Mexico,True
+Jos,Nigeria,Nigeria,True
+Ibadan,Nigeria,Nigeria,True
+Managua,Nicaragua,Nicaragua,True
+Ha'il,Saudi Arabia,Saudi Arabia,True
+Haiphong,Vietnam,Vietnam,True
+Cape Town,South Africa,South Africa,True
+Ipoh,Malaysia,Malaysia,True
+Kuantan,Malaysia,Malaysia,True
+Maiduguri,Nigeria,Nigeria,True
+Yangon,Myanmar,Myanmar,True
+Kathmandu,Nepal,Nepal,True
+Las Pinas,the Philippines,Philippines,True
+Reynosa,Mexico,Mexico,True
+Rostov-na-Donu,Russia,Russia,True
+Ibague,Colombia,Colombia,True
+Copenhagen,Denmark,Denmark,True
+Xinyang,China,China,True
+Weinan,China,China,True
+Wanning,China,China,True
+Shijiazhuang,China,China,True
+Laiwu,China,China,True
+Hengyang,China,China,True
+Changchun,China,China,True
+Varanasi,India,India,True
+Puducherry,India,India,True
+Bhopal,India,India,True
+Kanayannur,India,India,True
+Kirkuk,Iraq,Iraq,True
+Al Mawsil al Jadidah,Iraq,Morocco,False
+Tangerang,Indonesia,Indonesia,True

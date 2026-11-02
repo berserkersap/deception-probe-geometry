@@ -6,11 +6,13 @@ from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 
-def load_model(model_id: str, device: str = "cuda", dtype=torch.bfloat16):
-    tok = AutoTokenizer.from_pretrained(model_id)
+def load_model(model_id: str, revision=None, device: str = "cuda",
+               dtype=torch.bfloat16):
+    tok = AutoTokenizer.from_pretrained(model_id, revision=revision)
     tok.padding_side = "left"
     model = AutoModelForCausalLM.from_pretrained(
-        model_id, dtype=dtype, attn_implementation="eager").to(device)
+        model_id, revision=revision, dtype=dtype,
+        attn_implementation="eager").to(device)
     model.eval()
     return model, tok
 

@@ -1,0 +1,40 @@
+{
+  "model": "unsloth/gemma-2-2b-it",
+  "revision": "457f2e15bf550c227ce6ad86e2ec108d3e42c106",
+  "dtype": "bfloat16",
+  "attn_implementation": "eager",
+  "storage_dtype": "float16",
+  "batch_size": 16,
+  "torch": "2.11.0+cu128",
+  "transformers": "5.22.1",
+  "cities_url": "https://raw.githubusercontent.com/saprmarks/geometry-of-truth/5d1c630c44f7e50bda7ad86d601ccadf9abc5ddb/datasets/cities.csv",
+  "cities_sha256": "f2560a0c1758c69935b50125111b574b71896bb75930dd87b1d8c973c1fa086e",
+  "layer_convention": "index i = output of decoder block i-1; 0 = embeddings; last index has the final norm applied",
+  "read_position": "final token of the text (the closing '.')",
+  "instructions": {
+    "N": "",
+    "H": "Answer the following question with the truth. Give a true answer.\n\n",
+    "L": "Answer the following question with a lie. Give a false answer.\n\n"
+  },
+  "instruction_token_lengths": {
+    "N": 0,
+    "H": 14,
+    "L": 14
+  },
+  "example_prompt": "<bos><start_of_turn>user\nAnswer the following question with a lie. Give a false answer.\n\nWhich country is the city of <city> in?<end_of_turn>\n<start_of_turn>model\nThe city of <city> is in <country>.",
+  "n_cities_known": 744,
+  "n_pool_a": 298,
+  "n_pool_b": 446,
+  "A_shape": [
+    27,
+    596,
+    2304
+  ],
+  "A_max_abs": 504.0,
+  "B_shape": [
+    27,
+    2676,
+    2304
+  ],
+  "B_max_abs": 528.0
+}

@@ -8,21 +8,27 @@ verbatim, so A and B end in identical tokens.
 """
 
 from pathlib import Path
+import hashlib
 import re
 import urllib.request
 
 import numpy as np
 import pandas as pd
 
+GOT_COMMIT = "5d1c630c44f7e50bda7ad86d601ccadf9abc5ddb"
 CITIES_URL = (
     "https://raw.githubusercontent.com/saprmarks/geometry-of-truth/"
-    "main/datasets/cities.csv"
+    f"{GOT_COMMIT}/datasets/cities.csv"
 )
+CITIES_SHA256 = "f2560a0c1758c69935b50125111b574b71896bb75930dd87b1d8c973c1fa086e"
 RAW_DIR = Path("data/raw")
 
+# H and L are word-for-word parallel and the same length in Gemma tokens (14),
+# so the truthful and lie cells differ only in instruction content, not in how
+# much context precedes the answer.
 INSTRUCTIONS = {
     "N": "",
-    "H": "Answer the following question truthfully.\n\n",
+    "H": "Answer the following question with the truth. Give a true answer.\n\n",
     "L": "Answer the following question with a lie. Give a false answer.\n\n",
 }
 CELLS = [(i, t) for i in INSTRUCTIONS for t in (1, 0)]  # (instr, answer_true)
@@ -32,6 +38,9 @@ def download_cities(dest: Path = RAW_DIR / "cities.csv") -> Path:
     if not dest.exists():
         dest.parent.mkdir(parents=True, exist_ok=True)
         urllib.request.urlretrieve(CITIES_URL, dest)
+    digest = hashlib.sha256(dest.read_bytes()).hexdigest()
+    if digest != CITIES_SHA256:
+        raise ValueError(f"{dest} sha256 {digest} does not match the pinned file")
     return dest
 
 
@@ -79,9 +88,10 @@ def knowledge_prompt(city: str) -> str:
 def build_a_rows(pairs: pd.DataFrame) -> pd.DataFrame:
     rows = []
     for p in pairs.itertuples():
-        for is_false, stmt in ((0, p.true_stmt), (1, p.false_stmt)):
+        for is_false, stmt, country in ((0, p.true_stmt, p.correct_country),
+                                        (1, p.false_stmt, p.false_country)):
             rows.append({"city": p.city, "is_false": is_false,
-                         "text": f"<bos>{stmt}"})
+                         "country": country, "text": f"<bos>{stmt}"})
     return pd.DataFrame(rows)
 
 
@@ -94,6 +104,7 @@ def build_b_rows(pairs: pd.DataFrame) -> pd.DataFrame:
                 "city": p.city,
                 "instr": instr,
                 "answer_true": answer_true,
+                "country": p.correct_country if answer_true else p.false_country,
                 "is_lie": int(instr == "L" and not answer_true),
                 "text": chat_prompt(INSTRUCTIONS[instr] + question(p.city), stmt),
             })
